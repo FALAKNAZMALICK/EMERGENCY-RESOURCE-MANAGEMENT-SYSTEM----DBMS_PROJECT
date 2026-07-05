@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Disaster Form</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .form-row {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: inline-block;
+            width: 120px;
+            font-weight: 600;
+        }
+
+        .buttons {
+            margin-top: 15px;
+        }
+
+        .buttons button {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Disaster Form</h2>
+<hr>
+
+<div class="form-row">
+    <label>Type:</label>
+    <!-- 🔥 placeholder + length -->
+    <input type="text" id="type" disabled 
+           placeholder="Enter disaster type"
+           maxlength="50">
+</div>
+
+<div class="form-row">
+    <label>Severity:</label>
+    <!-- 🔥 controlled values -->
+    <input type="text" id="severity" disabled 
+           placeholder="Low / Medium / High"
+           maxlength="20">
+</div>
+
+<div class="buttons">
+    <button onclick="addNew()">Add</button>
+    <button onclick="save()">Save</button>
+    <button onclick="edit()">Edit</button>
+    <button onclick="deleteData()">Delete</button>
+    <button onclick="previous()">Previous</button>
+    <button onclick="next()">Next</button>
+</div>
+
+<h3>Records</h3>
+
+<table>
+<thead>
+<tr>
+    <th>ID</th>
+    <th>Type</th>
+    <th>Severity</th>
+</tr>
+</thead>
+<tbody id="grid"></tbody>
+</table>
+
+</div>
+
+<script>
+let data = [];
+let currentIndex = -1;
+let mode = "";
+
+/* LOAD DATA */
+async function loadData() {
+    let res = await fetch('http://localhost:3000/getDisasters');
+    data = await res.json();
+    displayGrid();
+}
+
+/* DISPLAY */
+function displayGrid() {
+    let rows = '';
+    data.forEach((d, index) => {
+        rows += `<tr onclick="selectRow(${index})">
+            <td>${d.disasterId}</td>
+            <td>${d.type}</td>
+            <td>${d.severityLevel}</td>
+        </tr>`;
+    });
+    grid.innerHTML = rows;
+}
+
+/* SELECT */
+function selectRow(index) {
+    currentIndex = index;
+    showRecord();
+}
+
+/* SHOW */
+function showRecord() {
+    let d = data[currentIndex];
+    type.value = d.type;
+    severity.value = d.severityLevel;
+}
+
+/* ENABLE */
+function enableInputs() {
+    type.disabled = false;
+    severity.disabled = false;
+}
+
+/* DISABLE */
+function disableInputs() {
+    type.disabled = true;
+    severity.disabled = true;
+}
+
+/* ADD */
+function addNew() {
+    type.value = "";
+    severity.value = "";
+    enableInputs();
+    mode = "add";
+}
+
+/* SAVE */
+async function save() {
+    let typeVal = type.value.trim();
+    let severityVal = severity.value.trim();
+
+    // 🔥 VALIDATION
+    if (typeVal === "") {
+        alert("Disaster type is required");
+        return;
+    }
+
+    if (typeVal.length > 50) {
+        alert("Type max length is 50");
+        return;
+    }
+
+    if (severityVal === "") {
+        alert("Severity is required");
+        return;
+    }
+
+    if (severityVal.length > 20) {
+        alert("Severity max length is 20");
+        return;
+    }
+
+    // optional strict validation
+    let validSeverity = ["low", "medium", "high"];
+    if (!validSeverity.includes(severityVal.toLowerCase())) {
+        alert("Severity must be Low, Medium, or High");
+        return;
+    }
+
+    if (mode === "add") {
+        await fetch('http://localhost:3000/addDisaster', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: typeVal, severity: severityVal })
+        });
+
+        alert("Saved Successfully");
+    }
+
+    if (mode === "edit") {
+        let id = data[currentIndex].disasterId;
+
+        await fetch(`http://localhost:3000/updateDisaster/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: typeVal, severity: severityVal })
+        });
+
+        alert("Updated Successfully");
+    }
+
+    loadData();
+    disableInputs();
+}
+
+/* EDIT */
+function edit() {
+    if (currentIndex >= 0) {
+        enableInputs();
+        mode = "edit";
+    }
+}
+
+/* DELETE */
+async function deleteData() {
+    let id = data[currentIndex].disasterId;
+
+    await fetch(`http://localhost:3000/deleteDisaster/${id}`, {
+        method: 'DELETE'
+    });
+
+    alert("Deleted Successfully");
+    loadData();
+}
+
+/* NAVIGATION */
+function next() {
+    if (currentIndex < data.length - 1) {
+        currentIndex++;
+        showRecord();
+    }
+}
+
+function previous() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        showRecord();
+    }
+}
+
+/* INIT */
+loadData();
+</script>
+
+</body>
+</html>
