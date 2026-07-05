@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Emergency Resource Management System</title>
+
+    <!-- ICONS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f1f5f9;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(90deg, #0f766e, #134e4a);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 240px;
+            height: 100vh;
+            background: #0f172a;
+            position: fixed;
+            top: 0;
+            left: 0;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* SCROLL AREA */
+        .menu {
+            flex: 1;
+            overflow-y: auto;
+            padding-top: 60px;
+        }
+
+        /* REPORT FIX (PIN AT BOTTOM ALWAYS VISIBLE) */
+        .reports {
+            border-top: 1px solid #1e293b;
+            padding: 10px 0;
+        }
+
+        .sidebar h4 {
+            color: #94a3b8;
+            margin: 15px;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .sidebar button {
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            background: none;
+            color: #e2e8f0;
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+        }
+
+        .sidebar button:hover {
+            background: #134e4a;
+            padding-left: 20px;
+        }
+
+        .active {
+            background: #0f766e !important;
+            color: white !important;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 240px;
+            padding: 20px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 90vh;
+            border: none;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    Emergency Resource Management System
+</div>
+
+<div class="sidebar">
+
+    <!-- SCROLLABLE MENU -->
+    <div class="menu">
+
+        <h4>Basic Data</h4>
+        <button onclick="loadPage(this,'users.html')"><i class="fa fa-user"></i> Users</button>
+        <button onclick="loadPage(this,'victim.html')"><i class="fa fa-user-injured"></i> Victim</button>
+        <button onclick="loadPage(this,'disaster.html')"><i class="fa fa-fire"></i> Disaster</button>
+        <button onclick="loadPage(this,'location.html')"><i class="fa fa-map-marker-alt"></i> Location</button>
+        <button onclick="loadPage(this,'resource.html')"><i class="fa fa-box"></i> Resource</button>
+
+        <h4>Rescue Setup</h4>
+        <button onclick="loadPage(this,'organization.html')"><i class="fa fa-building"></i> Organization</button>
+        <button onclick="loadPage(this,'rescuer.html')"><i class="fa fa-user-shield"></i> Rescuer</button>
+        <button onclick="loadPage(this,'team.html')"><i class="fa fa-users"></i> Team</button>
+
+        <h4>Operations</h4>
+        <button onclick="loadPage(this,'sos.html')"><i class="fa fa-bell"></i> SOS Request</button>
+        <button onclick="loadPage(this,'allocation.html')"><i class="fa fa-truck"></i> Allocation</button>
+
+    </div>
+
+    <!-- ALWAYS VISIBLE REPORT -->
+    <div class="reports">
+        <h4>Reports</h4>
+        <button onclick="loadPage(this,'report.html')">
+            <i class="fa fa-chart-bar"></i> Reports
+        </button>
+    </div>
+
+</div>
+
+<div class="main">
+    <iframe id="frame" src="users.html"></iframe>
+</div>
+
+<script>
+function loadPage(btn, page) {
+    document.querySelectorAll(".sidebar button")
+        .forEach(b => b.classList.remove("active"));
+
+    btn.classList.add("active");
+    document.getElementById("frame").src = page;
+}
+</script>
+
+</body>
+</html>
