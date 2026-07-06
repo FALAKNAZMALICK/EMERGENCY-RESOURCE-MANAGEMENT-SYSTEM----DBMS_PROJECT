@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Location Form</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .form-row {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: inline-block;
+            width: 130px;
+            font-weight: 600;
+        }
+
+        .buttons {
+            margin-top: 15px;
+        }
+
+        .buttons button {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Location Form</h2>
+<hr>
+
+<div class="form-row">
+    <label>Longitude:</label>
+    <!-- 🔥 numeric + range -->
+    <input type="number" id="longitude" disabled 
+           placeholder="Enter longitude (-180 to 180)"
+           step="0.000001" min="-180" max="180">
+</div>
+
+<div class="form-row">
+    <label>Latitude:</label>
+    <!-- 🔥 numeric + range -->
+    <input type="number" id="latitude" disabled 
+           placeholder="Enter latitude (-90 to 90)"
+           step="0.000001" min="-90" max="90">
+</div>
+
+<div class="form-row">
+    <label>Area:</label>
+    <!-- 🔥 text constraint -->
+    <input type="text" id="area" disabled 
+           placeholder="Enter area name"
+           maxlength="100">
+</div>
+
+<div class="buttons">
+    <button onclick="addNew()">Add</button>
+    <button onclick="save()">Save</button>
+    <button onclick="edit()">Edit</button>
+    <button onclick="deleteData()">Delete</button>
+    <button onclick="previous()">Previous</button>
+    <button onclick="next()">Next</button>
+</div>
+
+<h3>Records</h3>
+
+<table>
+<thead>
+<tr>
+    <th>ID</th>
+    <th>Longitude</th>
+    <th>Latitude</th>
+    <th>Area</th>
+</tr>
+</thead>
+<tbody id="grid"></tbody>
+</table>
+
+</div>
+
+<script>
+let data = [];
+let currentIndex = -1;
+let mode = "";
+
+/* LOAD */
+async function loadData() {
+    let res = await fetch('http://localhost:3000/getLocations');
+    data = await res.json();
+    displayGrid();
+}
+
+function displayGrid() {
+    let rows = '';
+    data.forEach((d,i) => {
+        rows += `<tr onclick="selectRow(${i})">
+            <td>${d.locId}</td>
+            <td>${d.longitude}</td>
+            <td>${d.latitude}</td>
+            <td>${d.area}</td>
+        </tr>`;
+    });
+    grid.innerHTML = rows;
+}
+
+function selectRow(i){
+    currentIndex = i;
+    show();
+}
+
+function show(){
+    let d = data[currentIndex];
+    longitude.value = d.longitude;
+    latitude.value = d.latitude;
+    area.value = d.area;
+}
+
+function enable(){
+    longitude.disabled = false;
+    latitude.disabled = false;
+    area.disabled = false;
+}
+
+function disable(){
+    longitude.disabled = true;
+    latitude.disabled = true;
+    area.disabled = true;
+}
+
+function addNew(){
+    longitude.value = "";
+    latitude.value = "";
+    area.value = "";
+    enable();
+    mode = "add";
+}
+
+async function save(){
+    let longitudeVal = longitude.value;
+    let latitudeVal = latitude.value;
+    let areaVal = area.value.trim();
+
+    // 🔥 VALIDATION
+    if (longitudeVal === "" || longitudeVal < -180 || longitudeVal > 180) {
+        alert("Longitude must be between -180 and 180");
+        return;
+    }
+
+    if (latitudeVal === "" || latitudeVal < -90 || latitudeVal > 90) {
+        alert("Latitude must be between -90 and 90");
+        return;
+    }
+
+    if (areaVal === "") {
+        alert("Area is required");
+        return;
+    }
+
+    if (areaVal.length > 100) {
+        alert("Area max length is 100");
+        return;
+    }
+
+    if(mode==="add"){
+        let res = await fetch('http://localhost:3000/addLocation',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                longitude: longitudeVal,
+                latitude: latitudeVal,
+                area: areaVal
+            })
+        });
+
+        alert(await res.text());
+    }
+
+    if(mode==="edit"){
+        let id = data[currentIndex].locId;
+
+        let res = await fetch(`http://localhost:3000/updateLocation/${id}`,{
+            method:'PUT',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                longitude: longitudeVal,
+                latitude: latitudeVal,
+                area: areaVal
+            })
+        });
+
+        alert(await res.text());
+    }
+
+    loadData();
+    disable();
+}
+
+function edit(){
+    if(currentIndex >= 0){
+        enable();
+        mode="edit";
+    }
+}
+
+async function deleteData(){
+    let id = data[currentIndex].locId;
+
+    let res = await fetch(`http://localhost:3000/deleteLocation/${id}`,{
+        method:'DELETE'
+    });
+
+    alert(await res.text());
+    loadData();
+}
+
+function next(){
+    if(currentIndex < data.length-1){
+        currentIndex++;
+        show();
+    }
+}
+
+function previous(){
+    if(currentIndex > 0){
+        currentIndex--;
+        show();
+    }
+}
+
+loadData();
+</script>
+
+</body>
+</html>
