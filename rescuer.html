@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rescuer Form</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .form-row {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: inline-block;
+            width: 130px;
+            font-weight: 600;
+        }
+
+        .buttons {
+            margin-top: 15px;
+        }
+
+        .buttons button {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Rescuer Form</h2>
+<hr>
+
+<div class="form-row">
+    <label>Skill Set:</label>
+    <!-- 🔥 placeholder + maxlength -->
+    <input type="text" id="skillSet" disabled 
+           placeholder="Enter skill (e.g., Doctor, Firefighter)"
+           maxlength="50">
+</div>
+
+<div class="form-row">
+    <label>Organization:</label>
+    <select id="orgId" disabled></select>
+</div>
+
+<div class="buttons">
+    <button onclick="addNew()">Add</button>
+    <button onclick="save()">Save</button>
+    <button onclick="edit()">Edit</button>
+    <button onclick="deleteData()">Delete</button>
+    <button onclick="previous()">Previous</button>
+    <button onclick="next()">Next</button>
+</div>
+
+<h3>Records</h3>
+
+<table>
+<thead>
+<tr>
+    <th>ID</th>
+    <th>Skill</th>
+    <th>Organization</th>
+</tr>
+</thead>
+<tbody id="grid"></tbody>
+</table>
+
+</div>
+
+<script>
+let data = [];
+let currentIndex = -1;
+let mode = "";
+
+/* LOAD ORGANIZATION DROPDOWN */
+async function loadOrganizations() {
+    let res = await fetch('http://localhost:3000/getOrganizations');
+    let orgs = await res.json();
+
+    orgId.innerHTML = "";
+
+    orgs.forEach(o => {
+        orgId.innerHTML += `<option value="${o.orgId}">
+            ${o.orgName}
+        </option>`;
+    });
+}
+
+/* LOAD DATA */
+async function loadData() {
+    let res = await fetch('http://localhost:3000/getRescuers');
+    data = await res.json();
+    displayGrid();
+}
+
+/* DISPLAY */
+function displayGrid() {
+    let rows = '';
+    data.forEach((d,i) => {
+        rows += `<tr onclick="selectRow(${i})">
+            <td>${d.rescuerId}</td>
+            <td>${d.skillSet}</td>
+            <td>${d.orgName}</td>
+        </tr>`;
+    });
+    grid.innerHTML = rows;
+}
+
+/* SELECT */
+function selectRow(i){
+    currentIndex = i;
+    show();
+}
+
+/* SHOW */
+function show(){
+    let d = data[currentIndex];
+    skillSet.value = d.skillSet;
+    orgId.value = d.orgId;
+}
+
+/* ENABLE */
+function enable(){
+    skillSet.disabled = false;
+    orgId.disabled = false;
+}
+
+/* DISABLE */
+function disable(){
+    skillSet.disabled = true;
+    orgId.disabled = true;
+}
+
+/* ADD */
+function addNew(){
+    skillSet.value = "";
+    orgId.value = "";
+    enable();
+    mode = "add";
+}
+
+/* SAVE */
+async function save(){
+    let skill = skillSet.value.trim();
+    let org = orgId.value;
+
+    // 🔥 VALIDATION
+    if (skill === "") {
+        alert("Skill is required");
+        return;
+    }
+
+    if (skill.length > 50) {
+        alert("Skill max length is 50");
+        return;
+    }
+
+    if (org === "") {
+        alert("Please select organization");
+        return;
+    }
+
+    if(mode==="add"){
+        let res = await fetch('http://localhost:3000/addRescuer',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({skillSet:skill, orgId:org})
+        });
+
+        alert(await res.text());
+    }
+
+    if(mode==="edit"){
+        let id = data[currentIndex].rescuerId;
+
+        let res = await fetch(`http://localhost:3000/updateRescuer/${id}`,{
+            method:'PUT',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({skillSet:skill, orgId:org})
+        });
+
+        alert(await res.text());
+    }
+
+    loadData();
+    disable();
+}
+
+/* EDIT */
+function edit(){
+    if(currentIndex >= 0){
+        enable();
+        mode="edit";
+    }
+}
+
+/* DELETE */
+async function deleteData(){
+    let id = data[currentIndex].rescuerId;
+
+    let res = await fetch(`http://localhost:3000/deleteRescuer/${id}`,{
+        method:'DELETE'
+    });
+
+    alert(await res.text());
+    loadData();
+}
+
+/* NAVIGATION */
+function next(){
+    if(currentIndex < data.length-1){
+        currentIndex++;
+        show();
+    }
+}
+
+function previous(){
+    if(currentIndex > 0){
+        currentIndex--;
+        show();
+    }
+}
+
+/* INIT */
+loadOrganizations();
+loadData();
+</script>
+
+</body>
+</html>
