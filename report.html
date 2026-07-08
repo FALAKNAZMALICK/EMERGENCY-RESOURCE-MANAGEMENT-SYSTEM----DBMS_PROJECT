@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reports</title>
+
+    <!-- GLOBAL STYLE -->
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .buttons {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .buttons button {
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Reports</h2>
+<hr>
+
+<div class="buttons">
+    <button onclick="loadLocationReport()">Requests per Location</button>
+    <button onclick="loadFullReport()">Full SOS Report</button>
+    <button onclick="loadAllocation()">Full Allocation Report</button>
+    <button onclick="loadResources()">Resources Used</button>
+    <button onclick="loadRescuer()">Rescuer Work</button>
+    <button onclick="loadDisaster()">Disaster Impact</button>
+    <button onclick="loadOrganization()">Organization Report</button>
+</div>
+
+<table>
+<thead id="thead"></thead>
+<tbody id="tbody"></tbody>
+</table>
+
+</div>
+
+<script>
+
+/* LOCATION REPORT */
+async function loadLocationReport() {
+    let res = await fetch('http://localhost:3000/report/location');
+    let data = await res.json();
+
+    thead.innerHTML = `<tr>
+        <th>Location</th>
+        <th>Total Requests</th>
+    </tr>`;
+
+    let rows = '';
+    data.forEach(d => {
+        rows += `<tr>
+            <td>${d.area}</td>
+            <td>${d.totalRequests}</td>
+        </tr>`;
+    });
+
+    tbody.innerHTML = rows;
+}
+
+/* FULL SOS REPORT */
+async function loadFullReport() {
+    let res = await fetch('http://localhost:3000/report/full');
+    let data = await res.json();
+
+    thead.innerHTML = `<tr>
+        <th>ID</th>
+        <th>Victim</th>
+        <th>Disaster</th>
+        <th>Location</th>
+    </tr>`;
+
+    let rows = '';
+    data.forEach(d => {
+        rows += `<tr>
+            <td>${d.requestId}</td>
+            <td>${d.victimName}</td>
+            <td>${d.disaster}</td>
+            <td>${d.location}</td>
+           
+        </tr>`;
+    });
+
+    tbody.innerHTML = rows;
+}
+
+/* FULL ALLOCATION REPORT */
+async function loadAllocation() {
+    let res = await fetch('http://localhost:3000/report/allocation');
+    let data = await res.json();
+
+    thead.innerHTML = `<tr>
+        <th>ID</th>
+        <th>Victim</th>
+        <th>Disaster</th>
+        <th>Location</th>
+        <th>Rescuer</th>
+        <th>Resource</th>
+        <th>Qty</th>
+    </tr>`;
+
+    let rows = '';
+    data.forEach(d => {
+        rows += `<tr>
+            <td>${d.allocationId}</td>
+            <td>${d.victimName}</td>
+            <td>${d.disaster}</td>
+            <td>${d.location}</td>
+            <td>${d.skillSet}</td>
+            <td>${d.itemName}</td>
+            <td>${d.allocatedQty}</td>
+        </tr>`;
+    });
+
+    tbody.innerHTML = rows;
+}
+
+/* RESOURCES USED */
+async function loadResources() {
+    let res = await fetch('http://localhost:3000/report/resources-used');
+    let data = await res.json();
+
+    thead.innerHTML = `<tr>
+        <th>Resource</th>
+        <th>Total Used</th>
+    </tr>`;
+
+    let rows = '';
+    data.forEach(d => {
+        rows += `<tr>
+            <td>${d.itemName}</td>
+            <td>${d.totalUsed}</td>
+        </tr>`;
+    });
+
+    tbody.innerHTML = rows;
+}
+
+/* RESCUER WORKLOAD */
+async function loadRescuer() {
+    let res = await fetch('http://localhost:3000/report/rescuer-work');
+    let data = await res.json();
+
+    thead.innerHTML = `<tr>
+        <th>Rescuer Skill</th>
+        <th>Total Tasks</th>
+    </tr>`;
+
+    let rows = '';
+    data.forEach(d => {
+        rows += `<tr>
+            <td>${d.skillSet}</td>
+            <td>${d.totalTasks}</td>
+        </tr>`;
+    });
+
+    tbody.innerHTML = rows;
+}
+
+/* DISASTER IMPACT */
+async function loadDisaster() {
+    let res = await fetch('http://localhost:3000/report/disaster-impact');
+    let data = await res.json();
+
+    thead.innerHTML = `<tr>
+        <th>Disaster</th>
+        <th>Total Cases</th>
+    </tr>`;
+
+    let rows = '';
+    data.forEach(d => {
+        rows += `<tr>
+            <td>${d.type}</td>
+            <td>${d.totalCases}</td>
+        </tr>`;
+    });
+
+    tbody.innerHTML = rows;
+}
+
+/* ORGANIZATION REPORT */
+async function loadOrganization() {
+    let res = await fetch('http://localhost:3000/report/organization');
+    let data = await res.json();
+
+    thead.innerHTML = `<tr>
+        <th>Organization</th>
+        <th>Total Rescuers</th>
+    </tr>`;
+
+    let rows = '';
+    data.forEach(d => {
+        rows += `<tr>
+            <td>${d.orgName}</td>
+            <td>${d.totalRescuers}</td>
+        </tr>`;
+    });
+
+    tbody.innerHTML = rows;
+}
+
+</script>
+
+</body>
+</html>
