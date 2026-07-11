@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Victim Form</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .form-row {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: inline-block;
+            width: 130px;
+            font-weight: 600;
+        }
+
+        .buttons {
+            margin-top: 15px;
+        }
+
+        .buttons button {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Victim Form</h2>
+<hr>
+
+<div class="form-row">
+    <label>User:</label>
+    <select id="userId" disabled></select>
+</div>
+
+<div class="form-row">
+    <label>Injury Status:</label>
+    <input type="text" id="injuryStatus" disabled 
+           placeholder="Enter injury status"
+           maxlength="100">
+</div>
+
+<div class="form-row">
+    <label>Family Count:</label>
+    <input type="number" id="familyCount" disabled 
+           placeholder="Enter family members"
+           min="0" max="20">
+</div>
+
+<div class="buttons">
+    <button onclick="addNew()">Add</button>
+    <button onclick="save()">Save</button>
+    <button onclick="edit()">Edit</button>
+    <button onclick="deleteData()">Delete</button>
+    <button onclick="previous()">Previous</button>
+    <button onclick="next()">Next</button>
+</div>
+
+<h3>Records</h3>
+
+<table>
+<thead>
+<tr>
+    <th>ID</th>
+    <th>User Name</th>
+    <th>Injury</th>
+    <th>Family</th>
+</tr>
+</thead>
+<tbody id="grid"></tbody>
+</table>
+
+</div>
+
+<script>
+let data = [];
+let currentIndex = -1;
+let mode = "";
+
+/* LOAD USERS DROPDOWN */
+async function loadUsers() {
+    let res = await fetch('http://localhost:3000/getUsers');
+    let users = await res.json();
+
+    let dropdown = document.getElementById("userId");
+    dropdown.innerHTML = "";
+
+    users.forEach(u => {
+        dropdown.innerHTML += `<option value="${u.userId}">
+            ${u.name}
+        </option>`;
+    });
+}
+
+/* LOAD DATA */
+async function loadData() {
+    let res = await fetch('http://localhost:3000/getVictims');
+    data = await res.json();
+    displayGrid();
+}
+
+/* DISPLAY */
+function displayGrid() {
+    let rows = '';
+    data.forEach((d, i) => {
+        rows += `<tr onclick="selectRow(${i})">
+            <td>${d.victimId}</td>
+            <td>${d.userName}</td>
+            <td>${d.injuryStatus}</td>
+            <td>${d.familyCount}</td>
+        </tr>`;
+    });
+    grid.innerHTML = rows;
+}
+
+/* SELECT */
+function selectRow(i) {
+    currentIndex = i;
+    showRecord();
+}
+
+/* SHOW */
+function showRecord() {
+    let d = data[currentIndex];
+
+    userId.value = d.userId;
+    injuryStatus.value = d.injuryStatus;
+    familyCount.value = d.familyCount;
+}
+
+/* ENABLE */
+function enable() {
+    userId.disabled = false;
+    injuryStatus.disabled = false;
+    familyCount.disabled = false;
+}
+
+/* DISABLE */
+function disable() {
+    userId.disabled = true;
+    injuryStatus.disabled = true;
+    familyCount.disabled = true;
+}
+
+/* ADD */
+function addNew() {
+    userId.value = "";
+    injuryStatus.value = "";
+    familyCount.value = "";
+    enable();
+    mode = "add";
+}
+
+/* SAVE */
+async function save() {
+    let userIdVal = userId.value;
+    let injuryStatusVal = injuryStatus.value.trim();
+    let familyCountVal = familyCount.value;
+
+    // 🔥 VALIDATION
+    if (userIdVal === "") {
+        alert("Please select a user");
+        return;
+    }
+
+    if (injuryStatusVal === "") {
+        alert("Injury status is required");
+        return;
+    }
+
+    if (injuryStatusVal.length > 100) {
+        alert("Injury max length is 100");
+        return;
+    }
+
+    if (familyCountVal === "" || familyCountVal < 0) {
+        alert("Enter valid family count");
+        return;
+    }
+
+    if (mode === "add") {
+        let res = await fetch('http://localhost:3000/addVictim', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId: userIdVal,
+                injuryStatus: injuryStatusVal,
+                familyCount: familyCountVal
+            })
+        });
+
+        alert(await res.text());
+    }
+
+    loadData();
+    disable();
+}
+
+/* EDIT */
+function edit() {
+    enable();
+    mode = "edit";
+}
+
+/* DELETE */
+async function deleteData() {
+    let id = data[currentIndex].victimId;
+
+    await fetch(`http://localhost:3000/deleteVictim/${id}`, {
+        method: 'DELETE'
+    });
+
+    alert("Deleted");
+    loadData();
+}
+
+/* NAVIGATION */
+function next() {
+    if (currentIndex < data.length - 1) {
+        currentIndex++;
+        showRecord();
+    }
+}
+
+function previous() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        showRecord();
+    }
+}
+
+/* INIT */
+loadUsers();
+loadData();
+</script>
+
+</body>
+</html>
