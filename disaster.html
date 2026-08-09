@@ -24,6 +24,7 @@
             margin-right: 8px;
         }
     </style>
+  <script src="config.js"></script>
 </head>
 
 <body>
@@ -80,7 +81,7 @@ let mode = "";
 
 /* LOAD DATA */
 async function loadData() {
-    let res = await fetch('http://localhost:3000/getDisasters');
+    let res = await fetch(`${API_BASE}/getDisasters`);
     data = await res.json();
     displayGrid();
 }
@@ -165,7 +166,7 @@ async function save() {
     }
 
     if (mode === "add") {
-        await fetch('http://localhost:3000/addDisaster', {
+        await fetch(`${API_BASE}/addDisaster`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ type: typeVal, severity: severityVal })
@@ -177,7 +178,7 @@ async function save() {
     if (mode === "edit") {
         let id = data[currentIndex].disasterId;
 
-        await fetch(`http://localhost:3000/updateDisaster/${id}`, {
+        await fetch(`${API_BASE}/updateDisaster/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ type: typeVal, severity: severityVal })
@@ -202,7 +203,7 @@ function edit() {
 async function deleteData() {
     let id = data[currentIndex].disasterId;
 
-    await fetch(`http://localhost:3000/deleteDisaster/${id}`, {
+    await fetch(`${API_BASE}/deleteDisaster/${id}`, {
         method: 'DELETE'
     });
 
