@@ -24,6 +24,7 @@
             margin-right: 8px;
         }
     </style>
+  <script src="config.js"></script>
 </head>
 
 <body>
@@ -84,7 +85,7 @@ let mode = "";
 
 /* LOAD USERS DROPDOWN */
 async function loadUsers() {
-    let res = await fetch('http://localhost:3000/getUsers');
+    let res = await fetch(`${API_BASE}/getUsers`);
     let users = await res.json();
 
     let dropdown = document.getElementById("userId");
@@ -99,7 +100,7 @@ async function loadUsers() {
 
 /* LOAD DATA */
 async function loadData() {
-    let res = await fetch('http://localhost:3000/getVictims');
+    let res = await fetch(`${API_BASE}/getVictims`);
     data = await res.json();
     displayGrid();
 }
@@ -184,7 +185,7 @@ async function save() {
     }
 
     if (mode === "add") {
-        let res = await fetch('http://localhost:3000/addVictim', {
+        let res = await fetch(`${API_BASE}/addVictim`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -211,7 +212,7 @@ function edit() {
 async function deleteData() {
     let id = data[currentIndex].victimId;
 
-    await fetch(`http://localhost:3000/deleteVictim/${id}`, {
+    await fetch(`${API_BASE}/deleteVictim/${id}`, {
         method: 'DELETE'
     });
 
