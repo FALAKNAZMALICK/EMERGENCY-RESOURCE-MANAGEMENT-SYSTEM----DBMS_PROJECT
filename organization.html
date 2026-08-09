@@ -24,6 +24,7 @@
             margin-right: 8px;
         }
     </style>
+  <script src="config.js"></script>
 </head>
 
 <body>
@@ -80,7 +81,7 @@ let mode = "";
 
 /* LOAD DATA */
 async function loadData() {
-    let res = await fetch('http://localhost:3000/getOrganizations');
+    let res = await fetch(`${API_BASE}/getOrganizations`);
     data = await res.json();
     displayGrid();
 }
@@ -153,7 +154,7 @@ async function save(){
     }
 
     if(mode==="add"){
-        let res = await fetch('http://localhost:3000/addOrganization',{
+        let res = await fetch(`${API_BASE}/addOrganization`,{
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({orgName:name, budget:bud})
@@ -165,7 +166,7 @@ async function save(){
     if(mode==="edit"){
         let id = data[currentIndex].orgId;
 
-        let res = await fetch(`http://localhost:3000/updateOrganization/${id}`,{
+        let res = await fetch(`${API_BASE}/updateOrganization/${id}`,{
             method:'PUT',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({orgName:name, budget:bud})
@@ -190,7 +191,7 @@ function edit(){
 async function deleteData(){
     let id = data[currentIndex].orgId;
 
-    let res = await fetch(`http://localhost:3000/deleteOrganization/${id}`,{
+    let res = await fetch(`${API_BASE}/deleteOrganization/${id}`,{
         method:'DELETE'
     });
 
