@@ -24,6 +24,7 @@
             margin-right: 8px;
         }
     </style>
+  <script src="config.js"></script>
 </head>
 
 <body>
@@ -78,7 +79,7 @@ let mode = "";
 
 /* LOAD DATA */
 async function loadData() {
-    let res = await fetch('http://localhost:3000/getUsers');
+    let res = await fetch(`${API_BASE}/getUsers`);
     data = await res.json();
     displayGrid();
 
@@ -161,7 +162,7 @@ async function save() {
     }
 
     if (mode === "add") {
-        let res = await fetch('http://localhost:3000/addUser', {
+        let res = await fetch(`${API_BASE}/addUser`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: nameVal, phone: phoneVal })
@@ -172,7 +173,7 @@ async function save() {
     if (mode === "edit") {
         let id = data[currentIndex].userId;
 
-        let res = await fetch(`http://localhost:3000/updateUser/${id}`, {
+        let res = await fetch(`${API_BASE}/updateUser/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: nameVal, phone: phoneVal })
@@ -196,7 +197,7 @@ function edit() {
 async function deleteData() {
     let id = data[currentIndex].userId;
 
-    let res = await fetch(`http://localhost:3000/deleteUser/${id}`, {
+    let res = await fetch(`${API_BASE}/deleteUser/${id}`, {
         method: 'DELETE'
     });
 
