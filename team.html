@@ -24,6 +24,7 @@
             margin-right: 8px;
         }
     </style>
+  <script src="config.js"></script>
 </head>
 
 <body>
@@ -77,7 +78,7 @@ let mode = "";
 
 /* LOAD RESCUERS DROPDOWN */
 async function loadRescuers() {
-    let res = await fetch('http://localhost:3000/getRescuers');
+    let res = await fetch(`${API_BASE}/getRescuers`);
     let rescuers = await res.json();
 
     leaderId.innerHTML = "";
@@ -91,7 +92,7 @@ async function loadRescuers() {
 
 /* LOAD DATA */
 async function loadData() {
-    let res = await fetch('http://localhost:3000/getTeams');
+    let res = await fetch(`${API_BASE}/getTeams`);
     data = await res.json();
     displayGrid();
 }
@@ -164,7 +165,7 @@ async function save(){
     }
 
     if(mode==="add"){
-        let res = await fetch('http://localhost:3000/addTeam',{
+        let res = await fetch(`${API_BASE}/addTeam`,{
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({teamName:name, leaderId:leader})
@@ -176,7 +177,7 @@ async function save(){
     if(mode==="edit"){
         let id = data[currentIndex].teamId;
 
-        let res = await fetch(`http://localhost:3000/updateTeam/${id}`,{
+        let res = await fetch(`${API_BASE}/updateTeam/${id}`,{
             method:'PUT',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({teamName:name, leaderId:leader})
@@ -201,7 +202,7 @@ function edit(){
 async function deleteData(){
     let id = data[currentIndex].teamId;
 
-    let res = await fetch(`http://localhost:3000/deleteTeam/${id}`,{
+    let res = await fetch(`${API_BASE}/deleteTeam/${id}`,{
         method:'DELETE'
     });
 
