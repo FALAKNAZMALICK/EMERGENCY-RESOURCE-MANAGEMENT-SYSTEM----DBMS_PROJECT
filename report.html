@@ -16,6 +16,7 @@
             margin: 5px;
         }
     </style>
+  <script src="config.js"></script>
 </head>
 
 <body>
@@ -46,7 +47,7 @@
 
 /* LOCATION REPORT */
 async function loadLocationReport() {
-    let res = await fetch('http://localhost:3000/report/location');
+    let res = await fetch(`${API_BASE}/report/location`);
     let data = await res.json();
 
     thead.innerHTML = `<tr>
@@ -67,7 +68,7 @@ async function loadLocationReport() {
 
 /* FULL SOS REPORT */
 async function loadFullReport() {
-    let res = await fetch('http://localhost:3000/report/full');
+    let res = await fetch(`${API_BASE}/report/full`);
     let data = await res.json();
 
     thead.innerHTML = `<tr>
@@ -93,7 +94,7 @@ async function loadFullReport() {
 
 /* FULL ALLOCATION REPORT */
 async function loadAllocation() {
-    let res = await fetch('http://localhost:3000/report/allocation');
+    let res = await fetch(`${API_BASE}/report/allocation`);
     let data = await res.json();
 
     thead.innerHTML = `<tr>
@@ -124,7 +125,7 @@ async function loadAllocation() {
 
 /* RESOURCES USED */
 async function loadResources() {
-    let res = await fetch('http://localhost:3000/report/resources-used');
+    let res = await fetch(`${API_BASE}/report/resources-used`);
     let data = await res.json();
 
     thead.innerHTML = `<tr>
@@ -145,7 +146,7 @@ async function loadResources() {
 
 /* RESCUER WORKLOAD */
 async function loadRescuer() {
-    let res = await fetch('http://localhost:3000/report/rescuer-work');
+    let res = await fetch(`${API_BASE}/report/rescuer-work`);
     let data = await res.json();
 
     thead.innerHTML = `<tr>
@@ -166,7 +167,7 @@ async function loadRescuer() {
 
 /* DISASTER IMPACT */
 async function loadDisaster() {
-    let res = await fetch('http://localhost:3000/report/disaster-impact');
+    let res = await fetch(`${API_BASE}/report/disaster-impact`);
     let data = await res.json();
 
     thead.innerHTML = `<tr>
@@ -187,7 +188,7 @@ async function loadDisaster() {
 
 /* ORGANIZATION REPORT */
 async function loadOrganization() {
-    let res = await fetch('http://localhost:3000/report/organization');
+    let res = await fetch(`${API_BASE}/report/organization`);
     let data = await res.json();
 
     thead.innerHTML = `<tr>
