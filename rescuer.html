@@ -24,6 +24,7 @@
             margin-right: 8px;
         }
     </style>
+  <script src="config.js"></script>
 </head>
 
 <body>
@@ -77,7 +78,7 @@ let mode = "";
 
 /* LOAD ORGANIZATION DROPDOWN */
 async function loadOrganizations() {
-    let res = await fetch('http://localhost:3000/getOrganizations');
+    let res = await fetch(`${API_BASE}/getOrganizations`);
     let orgs = await res.json();
 
     orgId.innerHTML = "";
@@ -91,7 +92,7 @@ async function loadOrganizations() {
 
 /* LOAD DATA */
 async function loadData() {
-    let res = await fetch('http://localhost:3000/getRescuers');
+    let res = await fetch(`${API_BASE}/getRescuers`);
     data = await res.json();
     displayGrid();
 }
@@ -164,7 +165,7 @@ async function save(){
     }
 
     if(mode==="add"){
-        let res = await fetch('http://localhost:3000/addRescuer',{
+        let res = await fetch(`${API_BASE}/addRescuer`,{
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({skillSet:skill, orgId:org})
@@ -176,7 +177,7 @@ async function save(){
     if(mode==="edit"){
         let id = data[currentIndex].rescuerId;
 
-        let res = await fetch(`http://localhost:3000/updateRescuer/${id}`,{
+        let res = await fetch(`${API_BASE}/updateRescuer/${id}`,{
             method:'PUT',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({skillSet:skill, orgId:org})
@@ -201,7 +202,7 @@ function edit(){
 async function deleteData(){
     let id = data[currentIndex].rescuerId;
 
-    let res = await fetch(`http://localhost:3000/deleteRescuer/${id}`,{
+    let res = await fetch(`${API_BASE}/deleteRescuer/${id}`,{
         method:'DELETE'
     });
 
