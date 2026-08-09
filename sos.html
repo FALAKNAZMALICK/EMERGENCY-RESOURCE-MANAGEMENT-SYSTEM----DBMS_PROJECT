@@ -24,6 +24,7 @@
             margin-right: 8px;
         }
     </style>
+  <script src="config.js"></script>
 </head>
 
 <body>
@@ -81,7 +82,7 @@ let mode = "";
 /* LOAD DROPDOWNS */
 async function loadDropdowns() {
 
-    let v = await fetch('http://localhost:3000/getVictims');
+    let v = await fetch(`${API_BASE}/getVictims`);
     let victims = await v.json();
     victimId.innerHTML = `<option value="">-- Select Victim --</option>`;
     victims.forEach(x => {
@@ -90,7 +91,7 @@ async function loadDropdowns() {
         </option>`;
     });
 
-    let d = await fetch('http://localhost:3000/getDisasters');
+    let d = await fetch(`${API_BASE}/getDisasters`);
     let disasters = await d.json();
     disasterId.innerHTML = `<option value="">-- Select Disaster --</option>`;
     disasters.forEach(x => {
@@ -99,7 +100,7 @@ async function loadDropdowns() {
         </option>`;
     });
 
-    let l = await fetch('http://localhost:3000/getLocations');
+    let l = await fetch(`${API_BASE}/getLocations`);
     let locations = await l.json();
     locId.innerHTML = `<option value="">-- Select Location --</option>`;
     locations.forEach(x => {
@@ -111,7 +112,7 @@ async function loadDropdowns() {
 
 /* LOAD DATA */
 async function loadData() {
-    let res = await fetch('http://localhost:3000/getRequests');
+    let res = await fetch(`${API_BASE}/getRequests`);
     data = await res.json();
     displayGrid();
 }
@@ -184,7 +185,7 @@ async function save(){
     }
 
     if(mode==="add"){
-        let res = await fetch('http://localhost:3000/addSOS',{
+        let res = await fetch(`${API_BASE}/addSOS`,{
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({
@@ -200,7 +201,7 @@ async function save(){
     if(mode==="edit"){
         let id = data[currentIndex].requestId;
 
-        let res = await fetch(`http://localhost:3000/updateSOS/${id}`,{
+        let res = await fetch(`${API_BASE}/updateSOS/${id}`,{
             method:'PUT',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({
@@ -229,7 +230,7 @@ function edit(){
 async function deleteData(){
     let id = data[currentIndex].requestId;
 
-    let res = await fetch(`http://localhost:3000/deleteSOS/${id}`,{
+    let res = await fetch(`${API_BASE}/deleteSOS/${id}`,{
         method:'DELETE'
     });
 
