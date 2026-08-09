@@ -24,6 +24,7 @@
             margin-right: 8px;
         }
     </style>
+  <script src="config.js"></script>
 </head>
 
 <body>
@@ -90,7 +91,7 @@ let mode = "";
 /* LOAD DROPDOWNS */
 async function loadDropdowns() {
 
-    let s = await fetch('http://localhost:3000/getRequests');
+    let s = await fetch(`${API_BASE}/getRequests`);
     let sos = await s.json();
     reqId.innerHTML = `<option value="">-- Select Request --</option>`;
     sos.forEach(x => {
@@ -99,7 +100,7 @@ async function loadDropdowns() {
         </option>`;
     });
 
-    let r = await fetch('http://localhost:3000/getRescuers');
+    let r = await fetch(`${API_BASE}/getRescuers`);
     let rescuers = await r.json();
     rescuerId.innerHTML = `<option value="">-- Select Rescuer --</option>`;
     rescuers.forEach(x => {
@@ -108,7 +109,7 @@ async function loadDropdowns() {
         </option>`;
     });
 
-    let re = await fetch('http://localhost:3000/getResources');
+    let re = await fetch(`${API_BASE}/getResources`);
     let resources = await re.json();
     resId.innerHTML = `<option value="">-- Select Resource --</option>`;
     resources.forEach(x => {
@@ -120,7 +121,7 @@ async function loadDropdowns() {
 
 /* LOAD DATA */
 async function loadData() {
-    let res = await fetch('http://localhost:3000/getAllocations');
+    let res = await fetch(`${API_BASE}/getAllocations`);
     data = await res.json();
     displayGrid();
 }
@@ -211,7 +212,7 @@ async function save(){
     }
 
     if(mode==="add"){
-        let res = await fetch('http://localhost:3000/addAllocation',{
+        let res = await fetch(`${API_BASE}/addAllocation`,{
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({
@@ -228,7 +229,7 @@ async function save(){
     if(mode==="edit"){
         let id = data[currentIndex].allocationId;
 
-        let res = await fetch(`http://localhost:3000/updateAllocation/${id}`,{
+        let res = await fetch(`${API_BASE}/updateAllocation/${id}`,{
             method:'PUT',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({
@@ -258,7 +259,7 @@ function edit(){
 async function deleteData(){
     let id = data[currentIndex].allocationId;
 
-    let res = await fetch(`http://localhost:3000/deleteAllocation/${id}`,{
+    let res = await fetch(`${API_BASE}/deleteAllocation/${id}`,{
         method:'DELETE'
     });
 
