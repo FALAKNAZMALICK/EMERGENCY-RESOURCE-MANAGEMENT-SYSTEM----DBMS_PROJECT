@@ -11,26 +11,33 @@ app.use(express.json());
 // Set these as Environment Variables on your host
 // (Render / Railway) -- NEVER hardcode real credentials here
 // ===================================================
-const dbConfig = {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    server: process.env.DB_SERVER,       // e.g. yourserver.database.windows.net
-    database: process.env.DB_NAME,
-    port: 1433,
-    options: {
-        encrypt: true,               // required for Azure SQL
-        trustServerCertificate: false
-    }
+const config = {
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  server: process.env.DB_SERVER,
+  database: process.env.DB_NAME,
+  options: {
+    encrypt: true, // Azure SQL ke liye zaruri hai
+    trustServerCertificate: false
+  }
 };
 
-let poolPromise = sql.connect(dbConfig)
-    .then(pool => {
-        console.log('Connected to SQL Server');
-        return pool;
-    })
-    .catch(err => {
-        console.error('DB connection failed:', err);
-    });
+// Global pool connection
+let poolPromise = sql.connect(config);
+
+app.post('/api/users', async (req, res) => {
+  try {
+    const pool = await poolPromise; // Connection wait karein
+    const result = await pool.request()
+      .input('Name', sql.VarChar, req.body.name)
+      // ... aapke inputs
+      .query('INSERT INTO Users ...');
+    
+    res.json({ success: true, data: result });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 async function q(strings, ...values) {
     const pool = await poolPromise;
