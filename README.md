@@ -3,7 +3,6 @@
 A full-stack DBMS project that coordinates disaster response by linking **victims**, **rescuers**, **resources**, **organizations**, and **SOS requests** through a normalized relational database.
 
 **Live App:** [emergencyresourcemanagementsystem.netlify.app](https://emergencyresourcemanagementsystem.netlify.app/)
-**Course:** CT 261 — Database Management System, NED University of Engineering & Technology
 
 ---
 
@@ -139,17 +138,6 @@ The system follows an 11-step sequence to keep referential integrity intact:
 - Resource quantities are not auto-decremented when an allocation is made
 - Location coordinates are entered manually (no live GPS integration)
 - Requires an active internet/server connection to function
-
-## 👥 Team
-
-| Name | Roll No. |
-|---|---|
-| Musfirah Shakil | CT-24051 |
-| Kinza | CT-24056 |
-| Falak Naz | CT-24059 |
-| Ayesha Rauf | CT-24098 |
-
-Developed for **CT 261 – Database Management System**, NED University of Engineering & Technology, Karachi.
 
 ## 📄 License
 
