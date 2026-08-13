@@ -127,7 +127,6 @@ The system follows an 11-step sequence to keep referential integrity intact:
 ## 📊 Sample Reports
 
 - Full SOS report (victim, disaster, location, status)
-- Geographical hotspot distribution
 - Rescuer workload by skill set
 - Resource utilization summary
 - Disaster impact by type
